@@ -7,6 +7,8 @@ import java.io.IOException;
 
 public class PokemonsHttpHandler implements HttpHandler {
 
+    public static final String PATH = "/api/v1/";
+
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         // TODO

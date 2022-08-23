@@ -4,6 +4,7 @@ import com.sun.net.httpserver.HttpServer;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.URL;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -13,14 +14,16 @@ import java.util.concurrent.ThreadPoolExecutor;
 public class App {
 
     private static final int DEFAULT_PORT = 8080;
+    public static final String HOSTNAME = "localhost";
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         try {
             final Integer port = getPort(args);
             startServer(port);
+            final URL rootUrl = new URL("http", HOSTNAME, port, ResourcesHttpHandler.PATH + "index.html");
+            System.out.println("Server successfully started, you can go to " + rootUrl);
         } catch (Exception e) {
             System.err.println(e);
-            return;
         }
     }
 
@@ -40,14 +43,15 @@ public class App {
     }
 
     private static void startServer(int port) throws IOException {
-        HttpServer server = HttpServer.create(new InetSocketAddress("localhost", port), 0);
+        HttpServer server = HttpServer.create(new InetSocketAddress(HOSTNAME, port), 0);
 
         ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(10);
         server.setExecutor(threadPoolExecutor);
 
-        server.createContext("/api", new PokemonsHttpHandler());
+        server.createContext(PokemonsHttpHandler.PATH, new PokemonsHttpHandler());
 
-// TODO        server.createContext("/resources");
+        server.createContext(ResourcesHttpHandler.PATH, new ResourcesHttpHandler());
+
         server.start();
     }
 }
