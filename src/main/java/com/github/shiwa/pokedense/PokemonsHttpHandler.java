@@ -1,4 +1,4 @@
-package com.github.Shiwa.pokedense;
+package com.github.shiwa.pokedense;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
