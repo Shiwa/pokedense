@@ -13,7 +13,7 @@ import java.util.stream.StreamSupport;
  */
 public class ResourcesHttpHandler implements HttpHandler {
 
-    public static final String PATH = "/www/";
+    public static final String PATH = "/";
 
     @Override
     public void handle(HttpExchange t) throws IOException {

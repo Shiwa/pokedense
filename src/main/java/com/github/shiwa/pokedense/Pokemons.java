@@ -8,10 +8,16 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import tech.units.indriya.ComparableQuantity;
+import tech.uom.lib.common.util.NaturalQuantityComparator;
 
+import javax.measure.Unit;
+import javax.measure.quantity.Length;
+import javax.measure.quantity.Mass;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
+import java.math.BigDecimal;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -20,21 +26,26 @@ import java.net.http.HttpResponse.BodySubscriber;
 import java.net.http.HttpResponse.BodySubscribers;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import static java.time.Instant.now;
 import static java.time.temporal.ChronoUnit.HOURS;
+import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toUnmodifiableList;
 import static javax.measure.MetricPrefix.DECI;
 import static javax.measure.MetricPrefix.HECTO;
 import static tech.units.indriya.quantity.Quantities.getQuantity;
-import static tech.units.indriya.unit.Units.GRAM;
-import static tech.units.indriya.unit.Units.METRE;
+import static tech.units.indriya.unit.Units.*;
 
 public final class Pokemons {
+
+    public static final String FILTER_NAME = "name";
+    public static final String FILTER_WEIGHT = "weight";
+    public static final String FILTER_WEIGHT_OPERATOR = "weightOperator";
+    public static final String FILTER_HEIGHT = "height";
+    public static final String FILTER_HEIGHT_OPERATOR = "heightOperator";
 
     private Pokemons() {
         super();
@@ -43,6 +54,52 @@ public final class Pokemons {
     private static List<Pokemon> pokemons = Collections.emptyList();
     private static Instant lastLoad;
     private static Duration expiration = Duration.of(1, HOURS);
+
+    public static List<Pokemon> search(Map<String, String> params) {
+
+        List<Predicate<Pokemon>> filters = new ArrayList<>();
+
+        final String nameFilter = params.get(FILTER_NAME);
+        if (nameFilter != null && !nameFilter.isBlank()) {
+            filters.add(it -> it.name.contains(nameFilter));
+        }
+
+        final String rawWeightFilter = params.get(FILTER_WEIGHT);
+        if (rawWeightFilter != null && !rawWeightFilter.isBlank()) {
+            final float weightFilterValue = Float.parseFloat(rawWeightFilter);
+            final Unit<Mass> weightFilterUnit = KILOGRAM;
+            final ComparableQuantity<Mass> weightFilter = getQuantity(weightFilterValue, weightFilterUnit);
+            final String weightFilterOperator = Optional.ofNullable(params.get(FILTER_WEIGHT_OPERATOR)).orElse("=");
+            final NaturalQuantityComparator<Mass> comparator = new NaturalQuantityComparator();
+            switch (weightFilterOperator) {
+                case "<" -> filters.add(it -> comparator.compare(it.weight, weightFilter) < 0);
+                case ">" -> filters.add(it -> comparator.compare(it.weight, weightFilter) > 0);
+                default -> filters.add(it -> comparator.compare(it.weight, weightFilter) == 0);
+            }
+        }
+
+        final String rawHeightFilter = params.get(FILTER_HEIGHT);
+        if (rawHeightFilter != null && !rawHeightFilter.isBlank()) {
+            final float heightFilterValue = Float.parseFloat(params.get(FILTER_HEIGHT));
+            final Unit<Length> heightFilterUnit = METRE;
+            final ComparableQuantity<Length> heightFilter = getQuantity(heightFilterValue, heightFilterUnit);
+            final String heightFilterOperator = Optional.ofNullable(params.get(FILTER_HEIGHT_OPERATOR)).orElse("=");
+            final NaturalQuantityComparator<Length> comparator = new NaturalQuantityComparator();
+            switch (heightFilterOperator) {
+                case "<" -> filters.add(it -> comparator.compare(it.height, heightFilter) < 0);
+                case ">" -> filters.add(it -> comparator.compare(it.height, heightFilter) > 0);
+                default -> filters.add(it -> comparator.compare(it.height, heightFilter) == 0);
+            }
+        }
+
+
+        var pokemons = get().stream();
+        for (Predicate<Pokemon> filter : filters) {
+            pokemons = pokemons.filter(filter);
+        }
+
+        return pokemons.collect(toList());
+    }
 
     public static List<Pokemon> get() {
         final boolean needToLoad = lastLoad == null || now().isAfter(lastLoad.plus(expiration));
@@ -151,4 +208,5 @@ public final class Pokemons {
         };
         return pokemonReader;
     }
+
 }

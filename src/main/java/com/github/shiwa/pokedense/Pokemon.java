@@ -5,6 +5,8 @@ import javax.measure.quantity.Length;
 import javax.measure.quantity.Mass;
 import java.util.Objects;
 
+import static tech.units.indriya.unit.Units.KILOGRAM;
+
 public class Pokemon {
     final String name;
 
@@ -34,5 +36,10 @@ public class Pokemon {
     @Override
     public int hashCode() {
         return Objects.hash(name, height, weight);
+    }
+
+    @Override
+    public String toString() {
+        return name + " (weight:" + weight.toString() + ", height:" + height + ")";
     }
 }
