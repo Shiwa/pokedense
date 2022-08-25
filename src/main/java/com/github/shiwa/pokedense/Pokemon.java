@@ -1,5 +1,7 @@
 package com.github.shiwa.pokedense;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import javax.measure.Quantity;
 import javax.measure.quantity.Length;
 import javax.measure.quantity.Mass;
@@ -23,6 +25,15 @@ public class Pokemon {
         this.name = name;
         this.height = height;
         this.weight = weight;
+    }
+
+    void toJson(ObjectNode jsonObject) {
+        jsonObject
+                .put("name", this.name)
+                .put("weight", this.weight.getValue().floatValue())
+                .put("weightUnit", this.weight.getUnit().toString())
+                .put("height", this.height.getValue().floatValue())
+                .put("heightUnit", this.height.getUnit().toString());
     }
 
     @Override
