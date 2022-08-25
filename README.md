@@ -28,3 +28,7 @@ Still, the business logic (Pokemon* classes) is separated and can be easily migr
 
 Caching all pokemon data: I did not find a way to provide filters to pokeAPI or to fetch height/weight in one query, so I had to get data in 2 steps. Caching all needed data allows to provide required functionnality without spamming the pokeAPI.
 A more advanced project may cache data in permanent storage instead of memory and update with a batch mechanism.
+
+### Frontend
+
+I’m not familiar with angular, so I used the bootstraper with the simplest configuration, in a distinct folder to avoid any interference with the maven pipeline.
