@@ -4,20 +4,26 @@ Prototype of a pokemon list with weight/height information and filtering ([follo
 
 ## Setup
 
-The project uses maven to manage java dependencies and build:
+The project uses jdk 17 and maven for the server side, and npm/angular for the frontend.
 
-`mvn clean package`
+To launch the backend use:
+```shell
+mvn clean package
 
-You can then launch the app by executing the generated jar:
+java -jar target/pokedense-1.0-SNAPSHOT-jar-with-dependencies.jar
+```
 
-`java -jar target/pokedense-1.0-SNAPSHOT-jar-with-dependencies.jar`
+You may provide a port number as first argument of the jar to override the default of 8080 (update it also in the `proxy.config.json` to make the frontend work in dev).
 
-You may provide a port number as first argument to override the default of 8080.
-Once launched, the server prints in the console the URL you may use to access the app.
+The pokemon list API is then available at `http://localhost:8080/api/v1/pokemons` with query parameters `name`, `weight` (kg), `weightOperator` (`>`/`<`/`=`), `height` (m), `heightOperator`
 
-`Server successfully started, you can go to http://localhost:8080/index.html`
+The frontend can be installed with npm and launched with
+```shell
+npm run start
+```
+It should open the app in your browser and load pokemons directly.
 
-You can request the API at `/api/v1/pokemons` with query parameters `name`, `weight` (kg), `weightOperator` (`>`/`<`/`=`), `height` (m), `heightOperator`
+TODO bundle and launch everything with maven
 
 ## Design choices
 
@@ -32,3 +38,5 @@ A more advanced project may cache data in permanent storage instead of memory an
 ### Frontend
 
 I’m not familiar with angular, so I used the bootstraper with the simplest configuration, in a distinct folder to avoid any interference with the maven pipeline.
+
+Then I read the angular "getting started guide" parts that seemed useful for the project.
