@@ -18,12 +18,39 @@
 
 </style>
 
-<!-- TODO filter form -->
-<ng-form>
+<form [formGroup]="searchForm" (ngSubmit)="search()">
+  <div>
+    <label for="name">Name</label>
+    <input id="name" type="text" formControlName="name">
+  </div>
 
-</ng-form>
+  <div>
+    <label for="height">Height</label>
+    <select name="heightOperator" formControlName="heightOperator">
+      <option value="lt">&lt;</option>
+      <option value="eq">=</option>
+      <option value="gt">&gt;</option>
+    </select>
+    <input id="height" type="number" min="0" formControlName="height">
+    <span>dm</span>
+  </div>
 
-<table *ngIf="search() | async as result">
+  <div>
+    <label for="weight">Weight</label>
+    <select name="weightOperator" formControlName="weightOperator">
+      <option value="lt">&lt;</option>
+      <option value="eq">=</option>
+      <option value="gt">&gt;</option>
+    </select>
+    <input id="weight" type="number" min="0" formControlName="weight">
+    <span>hg</span>
+  </div>
+
+
+  <button class="button" type="submit">Search</button>
+</form>
+
+<table *ngIf="lastResponse as result">
   <thead>
   <th>Name</th>
   <th>Height {{ result.records[0] ? "(" + result.records[0].heightUnit + ")" : "" }}</th>

@@ -1,6 +1,8 @@
-import {Component, OnInit} from '@angular/core';
-import {PokemonsService, SearchParams, SearchResponse} from "./pokemons.service";
-import {Observable} from "rxjs";
+import { Component, OnInit } from '@angular/core';
+import { PokemonsService, SearchParams, SearchResponse } from "./pokemons.service";
+import { Observable } from "rxjs";
+import { FormBuilder } from '@angular/forms';
+
 
 @Component({
   selector: 'app-pokemons',
@@ -10,58 +12,72 @@ import {Observable} from "rxjs";
 export class PokemonsComponent implements OnInit {
 
   constructor(
-    private pokemonsService: PokemonsService
+    private pokemonsService: PokemonsService,
+    private formBuilder: FormBuilder,
   ) {
   }
 
-  private params: SearchParams = {page: 1}
-  private currentParams?: SearchParams
+  searchForm = this.formBuilder.group<SearchParams>({
+    name: '',
+    height: 0,
+    heightOperator: "gt",
+    weight: 0,
+    weightOperator: "gt",
+  })
+
+  private page = 1
+  private currentParams?: Partial<SearchParams>
   private query!: Observable<SearchResponse>
-  private lastResponse?: SearchResponse
+  lastResponse?: SearchResponse
 
   ngOnInit(): void {
-    this.query = this.pokemonsService.search(this.params)
+    this.search()
   }
 
-  searchWithParams(params: SearchParams) {
-    this.params = params
-    return this.search()
+  preparedFormValue(): Partial<SearchParams> {
+    return Object.fromEntries(Object.entries(this.searchForm.value)
+      .filter((k, v) => v !== null && v !== undefined)
+    )
   }
 
 
   search() {
-    if (this.params !== this.currentParams) {
-      this.currentParams = this.params
-      this.query = this.pokemonsService.search(this.params)
+    const params: Partial<SearchParams> = {
+      ...this.preparedFormValue(),
+      page: this.page
+    }
+    if (JSON.stringify(params) != JSON.stringify(this.currentParams)) {
+      this.currentParams = params
+      this.query = this.pokemonsService.search(params)
       this.query.subscribe(response => this.lastResponse = response)
     }
     return this.query
   }
 
   hasPreviousPage() {
-    return this.params.page ?? 0 > 1
+    return this.page ?? 0 > 1
   }
 
   goToPreviousPage() {
-    if (this.params.page)
-      this.goToPage(this.params.page - 1)
+    if (this.page)
+      this.goToPage(this.page - 1)
   }
 
   hasNextPage() {
     if (!this.lastResponse)
       return false
-    const {total, limit, start} = this.lastResponse;
+    const { total, limit, start } = this.lastResponse;
     return start + limit < total
   }
 
   goToNextPage() {
-    if (this.params.page)
-      this.goToPage(this.params.page + 1)
+    if (this.page)
+      this.goToPage(this.page + 1)
   }
 
   goToPage(page: number) {
-    this.params = {...this.params, page}
-    this.pokemonsService.search(this.params)
+    this.page = page
+    this.search()
   }
 
 }

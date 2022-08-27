@@ -72,8 +72,8 @@ public final class Pokemons {
             final String weightFilterOperator = Optional.ofNullable(params.get(FILTER_WEIGHT_OPERATOR)).orElse("=");
             final NaturalQuantityComparator<Mass> comparator = new NaturalQuantityComparator();
             switch (weightFilterOperator) {
-                case "<" -> filters.add(it -> comparator.compare(it.weight, weightFilter) < 0);
-                case ">" -> filters.add(it -> comparator.compare(it.weight, weightFilter) > 0);
+                case "<","lt" -> filters.add(it -> comparator.compare(it.weight, weightFilter) < 0);
+                case ">","gt" -> filters.add(it -> comparator.compare(it.weight, weightFilter) > 0);
                 default -> filters.add(it -> comparator.compare(it.weight, weightFilter) == 0);
             }
         }
@@ -86,8 +86,8 @@ public final class Pokemons {
             final String heightFilterOperator = Optional.ofNullable(params.get(FILTER_HEIGHT_OPERATOR)).orElse("=");
             final NaturalQuantityComparator<Length> comparator = new NaturalQuantityComparator();
             switch (heightFilterOperator) {
-                case "<" -> filters.add(it -> comparator.compare(it.height, heightFilter) < 0);
-                case ">" -> filters.add(it -> comparator.compare(it.height, heightFilter) > 0);
+                case "<","lt" -> filters.add(it -> comparator.compare(it.height, heightFilter) < 0);
+                case ">","gt" -> filters.add(it -> comparator.compare(it.height, heightFilter) > 0);
                 default -> filters.add(it -> comparator.compare(it.height, heightFilter) == 0);
             }
         }

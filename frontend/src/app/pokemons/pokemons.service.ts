@@ -3,7 +3,7 @@ import {Pokemon} from './pokemon'
 import {HttpClient} from "@angular/common/http";
 import {environment} from "../../environments/environment";
 
-export type Operator = ">" | "<" | "="
+export type Operator = "gt" | "lt" | "eq"
 
 export interface SearchParams {
   name?: string
@@ -31,7 +31,7 @@ export class PokemonsService {
   ) {
   }
 
-  search(params: SearchParams) {
+  search(params: Partial<SearchParams>) {
     return this.http.get<SearchResponse>(`/api/v1/pokemons`, {
       responseType: "json",
       observe: "body",
