@@ -6,7 +6,7 @@ Prototype of a pokemon list with weight/height information and filtering ([follo
 
 The project uses jdk 17 and maven for the server side, and npm/angular for the frontend.
 
-To launch the backend use:
+To launch the webapp use:
 ```shell
 mvn clean package
 
@@ -17,13 +17,9 @@ You may provide a port number as first argument of the jar to override the defau
 
 The pokemon list API is then available at `http://localhost:8080/api/v1/pokemons` with query parameters `name`, `weight` (kg), `weightOperator` (`>`/`<`/`=`), `height` (m), `heightOperator`
 
-The frontend can be installed with npm and launched with
-```shell
-npm run start
-```
-It should open the app in your browser and load pokemons directly.
+The frontend is also built and bundled by maven, installing node/npm if needed.
 
-TODO bundle and launch everything with maven
+The full webapp is available at `http://localhost:8080/index.html` as indicated in the server log.
 
 ## Design choices
 

@@ -18,7 +18,7 @@
 
 </style>
 
-<form [formGroup]="searchForm" (ngSubmit)="search()">
+<form [formGroup]="searchForm" (ngSubmit)="search(1)">
   <div>
     <label for="name">Name</label>
     <input id="name" type="text" formControlName="name">
@@ -49,6 +49,11 @@
 
   <button class="button" type="submit">Search</button>
 </form>
+
+<div>
+  <span *ngIf="loading" style="color:red">Loading…</span>
+  <span *ngIf="!loading">&nbsp;</span>
+</div>
 
 <table *ngIf="lastResponse as result">
   <thead>
@@ -82,13 +87,13 @@
   <a
     *ngIf="hasPreviousPage()"
     (click)="goToPreviousPage()"
-    href="#">
+    href="index.html#">
     &lt; Previous
   </a>
   <a
     *ngIf="hasNextPage()"
     (click)="goToNextPage()"
-    href="#">
+    href="index.html#">
     Next &gt;
   </a>
 </footer>

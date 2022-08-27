@@ -36,3 +36,4 @@ build/
 
 ### Others ###
 /.jqwik-database
+/frontend/node/

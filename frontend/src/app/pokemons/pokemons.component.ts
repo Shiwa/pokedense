@@ -29,9 +29,10 @@ export class PokemonsComponent implements OnInit {
   private currentParams?: Partial<SearchParams>
   private query!: Observable<SearchResponse>
   lastResponse?: SearchResponse
+  loading: boolean = false
 
   ngOnInit(): void {
-    this.search()
+    this.search(1)
   }
 
   preparedFormValue(): Partial<SearchParams> {
@@ -41,21 +42,26 @@ export class PokemonsComponent implements OnInit {
   }
 
 
-  search() {
+  search(page: number) {
     const params: Partial<SearchParams> = {
       ...this.preparedFormValue(),
-      page: this.page
+      page
     }
     if (JSON.stringify(params) != JSON.stringify(this.currentParams)) {
       this.currentParams = params
+      this.loading = true
       this.query = this.pokemonsService.search(params)
-      this.query.subscribe(response => this.lastResponse = response)
+      this.query.subscribe(response => {
+        this.loading = false
+        this.lastResponse = response
+        this.page = page
+      })
     }
     return this.query
   }
 
   hasPreviousPage() {
-    return this.page ?? 0 > 1
+    return (this.page ?? 0) > 1
   }
 
   goToPreviousPage() {
@@ -76,8 +82,7 @@ export class PokemonsComponent implements OnInit {
   }
 
   goToPage(page: number) {
-    this.page = page
-    this.search()
+    this.search(page)
   }
 
 }
