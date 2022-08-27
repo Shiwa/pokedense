@@ -15,6 +15,7 @@
     align-items: center;
     padding: 1em;
   }
+
 </style>
 
 <!-- TODO filter form -->
@@ -27,16 +28,24 @@
   <th>Name</th>
   <th>Height {{ result.records[0] ? "(" + result.records[0].heightUnit + ")" : "" }}</th>
   <th>Weight {{ result.records[0] ? "(" + result.records[0].weightUnit + ")" : "" }}</th>
-  <th>Estimated density<!-- TODO volume: round = 4/3×π×(h/2)³ ; humanoid ~ height × height/4 × height/8 --></th>
-  <th>Will it float? <!-- density compared to 1kg/dm³ --></th>
+  <!-- TODO volume: round = 4/3×π×(h/2)³ ; humanoid ~ height × height/4 × height/8
+  <th>Estimated density</th>
+   -->
+  <!-- density compared to 1kg/dm³
+  <th>Will it float?</th>
+  -->
   </thead>
   <tbody>
   <tr *ngFor="let pokemon of result.records">
     <td>{{pokemon.name}}</td>
     <td>{{pokemon.height}}</td>
     <td>{{pokemon.weight}}</td>
+    <!--
     <td>TODO</td>
+    -->
+    <!--
     <td>TODO</td>
+    -->
   </tr>
   </tbody>
 </table>
